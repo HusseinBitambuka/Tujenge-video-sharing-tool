@@ -1,43 +1,46 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const Sequelize = require('sequelize');
-const process = require('process');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
+const config = require('../config/config.json')[process.env.NODE_ENV || 'development'];
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+// Initialize Sequelize
+const sequelize = config.use_env_variable
+  ? new Sequelize(process.env[config.use_env_variable], config)
+  : new Sequelize(config.database, config.username, config.password, config);
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
+// Import models
+const User = require('./userModel')(sequelize, Sequelize.DataTypes);
+const Video = require('./videoModel')(sequelize, Sequelize.DataTypes);
+const Resource = require('./resourceModel')(sequelize, Sequelize.DataTypes);
+const VideoTracking = require('./videoTrackingModel')(sequelize, Sequelize.DataTypes);
+const ResourceTracking = require('./resourceModel')(sequelize, Sequelize.DataTypes);
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+// Define relationships
+User.hasMany(Video, { foreignKey: 'userId', as: 'videos' });
+Video.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+User.hasMany(Resource, { foreignKey: 'userId', as: 'resources' });
+Resource.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-module.exports = db;
+Video.hasMany(VideoTracking, { foreignKey: 'videoId', as: 'trackings' });
+VideoTracking.belongsTo(Video, { foreignKey: 'videoId', as: 'video' });
+
+User.hasMany(VideoTracking, { foreignKey: 'userId', as: 'videoTrackings' });
+VideoTracking.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+Resource.hasMany(ResourceTracking, { foreignKey: 'resourceId', as: 'trackings' });
+ResourceTracking.belongsTo(Resource, { foreignKey: 'resourceId', as: 'resource' });
+
+User.hasMany(ResourceTracking, { foreignKey: 'userId', as: 'resourceTrackings' });
+ResourceTracking.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// Export models and Sequelize
+module.exports = {
+  sequelize,
+  Sequelize,
+  User,
+  Video,
+  Resource,
+  VideoTracking,
+  ResourceTracking,
+};
