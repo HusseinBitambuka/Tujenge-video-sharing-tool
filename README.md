@@ -45,7 +45,7 @@ This project is a **Node.js**-based application for video streaming and resource
 ### 2. Clone the Repository
 
 ```bash
-$ git clone https://github.com/your-repo/Tujenge-video-sharing-tool.git
+$ git clone https://github.com/HusseinBitambuka/Tujenge-video-sharing-tool.git
 $ cd video-tracking-app
 ```
 

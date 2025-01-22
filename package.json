@@ -1,0 +1,35 @@
+{
+  "name": "tujenge-video-sharing-tool",
+  "version": "1.0.0",
+  "description": "This project is a **Node.js**-based application for video streaming and resource sharing, designed to provide an educational platform for students. It includes features for uploading videos, PDFs, and links, tracking user interactions with these resources, and analyzing user data to demonstrate machine learning applications.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HusseinBitambuka/Tujenge-video-sharing-tool.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HusseinBitambuka/Tujenge-video-sharing-tool/issues"
+  },
+  "homepage": "https://github.com/HusseinBitambuka/Tujenge-video-sharing-tool#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9"
+  }
+}
