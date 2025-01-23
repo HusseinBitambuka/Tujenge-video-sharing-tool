@@ -1,68 +1,51 @@
-const { Video, VideoTracking } = require('../models');
+const s3 = require('../config/awsConfig');
+const { Video } = require('../models');
+const { v4: uuidv4 } = require('uuid');
 
-const VideoController = {
-  async uploadVideo(req, res) {
-    try {
-      const { title, description } = req.body;
-      const s3Url = req.file.location; // Assuming AWS S3 upload is integrated
-      const createdBy = req.user.id;
+exports.uploadVideo = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file provided' });
 
-      const video = await Video.create({ title, description, s3Url, createdBy });
-      res.status(201).json({ message: 'Video uploaded successfully', video });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to upload video', error });
-    }
-  },
+    const fileName = `videos/${uuidv4()}-${req.file.originalname}`;
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: fileName,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
 
-  async deleteVideo(req, res) {
-    try {
-      const { id } = req.params;
+    const s3Response = await s3.upload(params).promise();
 
-      const video = await Video.findByPk(id);
-      if (!video) return res.status(404).json({ message: 'Video not found' });
+    const video = await Video.create({
+      title: req.body.title,
+      description: req.body.description,
+      s3Url: s3Response.Location,
+      createdBy: req.user.id,
+    });
 
-      if (req.user.role !== 'admin')
-        return res.status(403).json({ message: 'Unauthorized action' });
-
-      await video.destroy();
-      res.status(200).json({ message: 'Video deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to delete video', error });
-    }
-  },
-
-  async getVideos(req, res) {
-    try {
-      const videos = await Video.findAll();
-      res.status(200).json({ videos });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch videos', error });
-    }
-  },
-
-  async trackVideo(req, res) {
-    try {
-      const { videoId, progress, completed } = req.body;
-      const userId = req.user.id;
-
-      let tracking = await VideoTracking.findOne({ where: { userId, videoId } });
-
-      if (tracking) {
-        tracking.progress = progress;
-        if (completed) {
-          tracking.completed = true;
-          tracking.rewatchedCount += 1;
-        }
-        await tracking.save();
-      } else {
-        await VideoTracking.create({ userId, videoId, progress, completed });
-      }
-
-      res.status(200).json({ message: 'Video tracking updated' });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to track video', error });
-    }
-  },
+    res.status(201).json(video);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error uploading video' });
+  }
 };
 
-module.exports = VideoController;
+exports.deleteVideo = async (req, res) => {
+  try {
+    const video = await Video.findByPk(req.params.id);
+    if (!video) return res.status(404).json({ message: 'Video not found' });
+
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: video.s3Url.split('/').slice(-2).join('/'), // Extract S3 key from URL
+    };
+
+    await s3.deleteObject(params).promise();
+    await video.destroy();
+
+    res.status(200).json({ message: 'Video deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting video' });
+  }
+};

@@ -1,60 +1,52 @@
-const { Resource, ResourceTracking } = require('../models');
+const s3 = require('../config/awsConfig');
+const { Resource } = require('../models');
+const { v4: uuidv4 } = require('uuid');
 
-const ResourceController = {
-  async uploadResource(req, res) {
-    try {
-      const { title, description, type, url } = req.body;
-      const createdBy = req.user.id;
+exports.uploadResource = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file provided' });
 
-      const resource = await Resource.create({ title, description, type, url, createdBy });
-      res.status(201).json({ message: 'Resource uploaded successfully', resource });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to upload resource', error });
-    }
-  },
+    const fileName = `resources/${uuidv4()}-${req.file.originalname}`;
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: fileName,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    };
 
-  async deleteResource(req, res) {
-    try {
-      const { id } = req.params;
+    const s3Response = await s3.upload(params).promise();
 
-      const resource = await Resource.findByPk(id);
-      if (!resource) return res.status(404).json({ message: 'Resource not found' });
+    const resource = await Resource.create({
+      title: req.body.title,
+      type: req.body.type,
+      description: req.body.description,
+      s3Url: s3Response.Location,
+      createdBy: req.user.id,
+    });
 
-      if (req.user.role !== 'admin')
-        return res.status(403).json({ message: 'Unauthorized action' });
-
-      await resource.destroy();
-      res.status(200).json({ message: 'Resource deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to delete resource', error });
-    }
-  },
-
-  async trackResource(req, res) {
-    try {
-      const { resourceId } = req.body;
-      const userId = req.user.id;
-
-      let tracking = await ResourceTracking.findOne({ where: { userId, resourceId } });
-
-      if (tracking) {
-        tracking.interactions += 1;
-        tracking.lastInteractedAt = new Date();
-        await tracking.save();
-      } else {
-        await ResourceTracking.create({
-          userId,
-          resourceId,
-          interactions: 1,
-          lastInteractedAt: new Date(),
-        });
-      }
-
-      res.status(200).json({ message: 'Resource tracking updated' });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to track resource', error });
-    }
-  },
+    res.status(201).json(resource);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error uploading resource' });
+  }
 };
 
-module.exports = ResourceController;
+exports.deleteResource = async (req, res) => {
+  try {
+    const resource = await Resource.findByPk(req.params.id);
+    if (!resource) return res.status(404).json({ message: 'Resource not found' });
+
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: resource.s3Url.split('/').slice(-2).join('/'), // Extract S3 key from URL
+    };
+
+    await s3.deleteObject(params).promise();
+    await resource.destroy();
+
+    res.status(200).json({ message: 'Resource deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting resource' });
+  }
+};
