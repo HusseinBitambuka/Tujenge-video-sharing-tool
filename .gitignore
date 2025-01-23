@@ -10,7 +10,7 @@ yarn-error.log*
 
 # Environment variables
 .env
-src/config/config.json
+src/config/*
 
 
 # AWS credentials (if accidentally placed in project directory)
