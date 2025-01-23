@@ -26,6 +26,7 @@ const Video = sequelize.define('Video', {
 }, {
   timestamps: true,
   underscored: true,
+  paranoid:true,
 });
 
 module.exports = Video;

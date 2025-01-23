@@ -1,31 +1,40 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Resource = sequelize.define('Resource', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+const Resource = sequelize.define(
+  'Resource',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    type: {
+      type: DataTypes.ENUM('pdf', 'link'),
+      allowNull: false,
+    },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    createdBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  type: {
-    type: DataTypes.ENUM('PDF', 'Link'),
-    allowNull: false,
-  },
-  url: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  createdBy: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-}, {
-  timestamps: true,
-  underscored: true,
-});
+  {
+    timestamps: true,
+    underscored: true,
+    paranoid: true, // Soft delete
+  }
+);
 
 module.exports = Resource;

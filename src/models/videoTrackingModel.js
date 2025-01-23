@@ -1,33 +1,42 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const VideoTracking = sequelize.define('VideoTracking', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+const VideoTracking = sequelize.define(
+  'VideoTracking',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    videoId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    progress: {
+      type: DataTypes.INTEGER, // Time in seconds
+      allowNull: false,
+      defaultValue: 0,
+    },
+    completed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    rewatchedCount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  videoId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  watchedDuration: {
-    type: DataTypes.INTEGER, // In seconds
-    allowNull: false,
-    defaultValue: 0,
-  },
-  finished: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
-}, {
-  timestamps: true,
-  underscored: true,
-});
+  {
+    timestamps: true,
+    underscored: true,
+  }
+);
 
 module.exports = VideoTracking;
