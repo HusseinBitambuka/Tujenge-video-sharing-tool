@@ -1,5 +1,5 @@
 const express = require('express');
-const ResourceController = require('../controllers/ResourceController');
+const ResourceController = require('../controllers/resourceController');
 const authenticate = require('../middlewares/authenticate');
 const adminOnly = require('../middlewares/adminOnly');
 

@@ -1,9 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-
-const VideoTracking = sequelize.define(
-  'VideoTracking',
-  {
+module.exports = (sequelize, DataTypes) => {
+  const VideoTracking = sequelize.define('VideoTracking', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -18,7 +14,7 @@ const VideoTracking = sequelize.define(
       allowNull: false,
     },
     progress: {
-      type: DataTypes.INTEGER, // Time in seconds
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
     },
@@ -32,11 +28,10 @@ const VideoTracking = sequelize.define(
       allowNull: false,
       defaultValue: 0,
     },
-  },
-  {
+  }, {
     timestamps: true,
     underscored: true,
-  }
-);
+  });
 
-module.exports = VideoTracking;
+  return VideoTracking;
+};

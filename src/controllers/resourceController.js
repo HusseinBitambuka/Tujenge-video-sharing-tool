@@ -50,3 +50,27 @@ exports.deleteResource = async (req, res) => {
     res.status(500).json({ message: 'Error deleting resource' });
   }
 };
+// ... existing code ...
+
+exports.trackResource = async (req, res) => {
+  try {
+    const { resourceId, action } = req.body;
+    
+    // Verify resource exists
+    const resource = await Resource.findByPk(resourceId);
+    if (!resource) {
+      return res.status(404).json({ message: 'Resource not found' });
+    }
+
+    const tracking = await ResourceTracking.create({
+      userId: req.user.id,
+      resourceId,
+      action
+    });
+
+    res.status(201).json(tracking);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error tracking resource interaction' });
+  }
+};

@@ -1,9 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-
-const Resource = sequelize.define(
-  'Resource',
-  {
+module.exports = (sequelize, DataTypes) => {
+  const Resource = sequelize.define('Resource', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -29,12 +25,11 @@ const Resource = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-  },
-  {
+  }, {
     timestamps: true,
     underscored: true,
-    paranoid: true, // Soft delete
-  }
-);
+    paranoid: true,
+  });
 
-module.exports = Resource;
+  return Resource;
+};
