@@ -1,211 +1,194 @@
-# Video Streaming and Resource Sharing Application
+# Tujenge Video Sharing Tool
 
-This project is a **Node.js**-based application for video streaming and resource sharing, designed to provide an educational platform for students. It includes features for uploading videos, PDFs, and links, tracking user interactions with these resources, and analyzing user data to demonstrate machine learning applications.
+A Node.js-based application for video and resource sharing, designed specifically for educational purposes. The platform enables administrators to upload educational content and track student engagement with videos and resources.
 
 ## Features
 
 1. **Video Management**:
 
-   - Upload and stream videos.
-   - Track user interactions: total views, watched duration, completion status, rewatch count.
+   - Secure video upload to AWS S3
+   - Video streaming capabilities
+   - Track student viewing progress and engagement
 
 2. **Resource Management**:
 
-   - Upload PDFs and share links.
-   - Track interactions with PDFs and links, such as downloads or clicks.
+   - Support for PDF documents and external links
+   - Track resource interactions (downloads, views)
 
-3. **User Tracking**:
-
-   - Monitor user engagement.
-   - Collect data for machine learning experiments.
-
-4. **Authentication and Authorization**:
-   - User accounts with first and last names, cohort, and password.
-
----
+3. **User System**:
+   - Role-based access (admin/student)
+   - Secure authentication using JWT
+   - User profiles with cohort tracking
 
 ## Tech Stack
 
-- **Frontend**: React.js
-- **Backend**: Node.js (Express.js)
-- **Database**: PostgreSQL
-- **Storage**: AWS S3 for video and PDF storage
-- **Deployment**: Dockerized containers
+- **Backend**: Node.js with Express.js
+- **Database**: PostgreSQL with Sequelize ORM
+- **Storage**: AWS S3
+- **Authentication**: JWT (JSON Web Tokens)
 
----
+## Project Structure
+
+```
+src/
+├── config/
+│   ├── awsConfig.js
+│   └── config.js
+├── controllers/
+│   ├── userController.js
+│   ├── videoController.js
+│   └── resourceController.js
+├── middlewares/
+│   ├── authenticate.js
+│   ├── adminOnly.js
+│   └── multer.js
+├── models/
+│   ├── index.js
+│   ├── userModel.js
+│   ├── videoModel.js
+│   └── resourceModel.js
+├── routes/
+│   ├── userRoutes.js
+│   ├── videoRoutes.js
+│   └── resourceRoutes.js
+└── app.js
+```
 
 ## Setup Instructions
 
-### 1. Prerequisites
+### Prerequisites
 
-- Node.js and npm installed.
-- PostgreSQL database set up.
-- AWS account with S3 bucket configured.
+- Node.js (v14 or higher)
+- PostgreSQL
+- AWS Account with S3 bucket
 
-### 2. Clone the Repository
+### Installation
 
-```bash
-$ git clone https://github.com/HusseinBitambuka/Tujenge-video-sharing-tool.git
-$ cd video-tracking-app
-```
-
-### 3. Install Dependencies
+1. Clone the repository:
 
 ```bash
-$ npm install
+git clone https://github.com/HusseinBitambuka/Tujenge-video-sharing-tool.git
+cd Tujenge-video-sharing-tool
 ```
 
-### 4. Set Up Environment Variables
+2. Install dependencies:
 
-Create a `.env` file in the project root with the following keys:
+```bash
+npm install
+```
+
+3. Create `.env` file in the project root:
 
 ```env
-DATABASE_URL=postgresql://username:password@localhost:5432/database_name
-AWS_ACCESS_KEY_ID=your_aws_access_key
-AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-S3_BUCKET_NAME=your_bucket_name
-JWT_SECRET=your_jwt_secret_key
-PORT=5000
+# Server Configuration
+PORT=3000
+NODE_ENV=development
+
+# Database Configuration
+DB_NAME=tujenge_video_tool_dev
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_DIALECT=postgres
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_here
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=your_region
+AWS_S3_BUCKET_NAME=your_bucket_name
 ```
 
-### 5. Initialize the Database
-
-Run the database migrations to set up tables.
+4. Initialize the database:
 
 ```bash
-$ npm run migrate
+# Access PostgreSQL
+sudo -u postgres psql
+
+# Create database
+CREATE DATABASE tujenge_video_tool_dev;
 ```
 
-### 6. Start the Application
+5. Start the server:
 
 ```bash
-$ npm start
+npm start
 ```
-
-The server will run on `http://localhost:5000` by default.
-
----
 
 ## API Endpoints
 
-### **Authentication**
+### Authentication
 
-1. **Register User**  
-   `POST /api/auth/register`
+- `POST /api/users/register` - Register new user
+- `POST /api/users/login` - User login
 
-   **Payload**:
+### Videos
 
-   ```json
-   {
-     "firstName": "John",
-     "lastName": "Doe",
-     "cohort": "Spring 2025",
-     "password": "securepassword"
-   }
-   ```
+- `POST /api/videos/upload` - Upload video (Admin only)
+- `DELETE /api/videos/:id` - Delete video (Admin only)
+- `GET /api/videos` - Get all videos
+- `POST /api/videos/track` - Track video interaction
 
-2. **Login User**  
-   `POST /api/auth/login`
+### Resources
 
-   **Payload**:
+- `POST /api/resources/upload` - Upload resource (Admin only)
+- `DELETE /api/resources/:id` - Delete resource (Admin only)
+- `POST /api/resources/track` - Track resource interaction
 
-   ```json
-   {
-     "cohort": "Spring 2025",
-     "password": "securepassword"
-   }
-   ```
+## Sample API Requests
 
----
+### Register User
 
-### **Video Management**
+```bash
+curl -X POST http://localhost:3000/api/users/register \
+-H "Content-Type: application/json" \
+-d '{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "cohort": "2023",
+  "role": "student"
+}'
+```
 
-1. **Upload Video**  
-   `POST /api/videos`
+### Login
 
-   **Payload**:
+```bash
+curl -X POST http://localhost:3000/api/users/login \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "john@example.com",
+  "password": "password123"
+}'
+```
 
-   ```json
-   {
-     "title": "Lesson 1",
-     "file": <binary>
-   }
-   ```
+## Error Handling
 
-2. **Track Video Interaction**  
-   `POST /api/videos/interactions`
+The application includes comprehensive error handling for:
 
-   **Payload**:
+- Authentication failures
+- File upload issues
+- Database errors
+- Invalid requests
 
-   ```json
-   {
-     "userId": 1,
-     "videoId": 10,
-     "watchedDuration": 120,
-     "completed": false
-   }
-   ```
+## Security Features
 
----
-
-### **Resource Management**
-
-1. **Upload PDF**  
-   `POST /api/resources/pdf`
-
-   **Payload**:
-
-   ```json
-   {
-     "title": "Chapter 1",
-     "file": <binary>
-   }
-   ```
-
-2. **Share Link**  
-   `POST /api/resources/links`
-
-   **Payload**:
-
-   ```json
-   {
-     "title": "Data Structures",
-     "url": "https://example.com/ds-guide"
-   }
-   ```
-
-3. **Track Resource Interaction**  
-   `POST /api/resources/interactions`
-
-   **Payload**:
-
-   ```json
-   {
-     "userId": 1,
-     "resourceId": 15,
-     "resourceType": "pdf",
-     "extraData": {
-       "downloaded": true
-     }
-   }
-   ```
-
----
-
-## Future Enhancements
-
-- **Machine Learning Integration**: Analyze user engagement patterns and provide insights.
-- **Notifications**: Alert users about new resources or assignments.
-- **Live Classes**: Incorporate live video streaming for interactive sessions.
-
----
+- Password hashing using bcrypt
+- JWT-based authentication
+- Role-based access control
+- Secure file upload validation
 
 ## Contributing
 
-Feel free to fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
-
----
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.
