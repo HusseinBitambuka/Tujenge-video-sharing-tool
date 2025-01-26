@@ -17,6 +17,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+
 // Import all models
 db.User = require('./userModel')(sequelize, Sequelize.DataTypes);
 db.Video = require('./videoModel')(sequelize, Sequelize.DataTypes);

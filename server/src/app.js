@@ -6,7 +6,6 @@ const { sequelize } = require('./models');
 
 // Load environment variables
 dotenv.config();
-
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const videoRoutes = require('./routes/videoRoutes');
