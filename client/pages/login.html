@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Tujenge Video Sharing</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <form id="loginForm" class="auth-form">
+            <h2>Login</h2>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <div class="password-input">
+                    <input type="password" id="password" required>
+                    <span id="togglePassword" class="password-toggle">👁️</span>
+                </div>
+            </div>
+            <div id="errorMessage" class="error-message"></div>
+            <button type="submit">Login</button>
+            <p class="auth-link">Don't have an account? <a href="register.html">Register</a></p>
+        </form>
+    </div>
+    <script src="../assets/js/login.js"></script>
+</body>
+</html>

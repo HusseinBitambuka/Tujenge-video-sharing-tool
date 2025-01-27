@@ -1,0 +1,69 @@
+.videos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.video-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.video-info {
+    padding: 1rem;
+}
+
+.video-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.video-description {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.admin-only {
+    display: none;
+}

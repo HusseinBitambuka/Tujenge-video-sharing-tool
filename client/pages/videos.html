@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videos - Tujenge Video Sharing</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/videos.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Tujenge Video Sharing</div>
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="videos.html" class="active">Videos</a>
+            <a href="resources.html">Resources</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="videos-header">
+            <h1>Educational Videos</h1>
+            <button id="uploadBtn" class="admin-only">Upload Video</button>
+        </div>
+
+        <div id="uploadModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Upload Video</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="video">Video File</label>
+                        <input type="file" id="video" accept="video/*" required>
+                    </div>
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="videoGrid" class="video-grid">
+            <!-- Videos will be dynamically added here -->
+        </div>
+    </main>
+
+    <script src="../assets/js/videos.js"></script>
+</body>
+</html>

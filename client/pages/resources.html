@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Tujenge Video Sharing</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/resources.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Tujenge Video Sharing</div>
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="videos.html">Videos</a>
+            <a href="resources.html" class="active">Resources</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="resources-header">
+            <h1>Learning Resources</h1>
+            <button id="uploadBtn" class="admin-only">Add Resource</button>
+        </div>
+
+        <div id="uploadModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add Resource</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Resource Type</label>
+                        <select id="type" required>
+                            <option value="pdf">PDF Document</option>
+                            <option value="link">External Link</option>
+                        </select>
+                    </div>
+                    <div id="fileInput" class="form-group">
+                        <label for="file">File</label>
+                        <input type="file" id="file" accept=".pdf">
+                    </div>
+                    <div id="urlInput" class="form-group" style="display: none;">
+                        <label for="url">URL</label>
+                        <input type="url" id="url">
+                    </div>
+                    <button type="submit">Upload</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="resourceGrid" class="resource-grid">
+            <!-- Resources will be dynamically added here -->
+        </div>
+    </main>
+
+    <script src="../assets/js/resources.js"></script>
+</body>
+</html>
